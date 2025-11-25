@@ -12,7 +12,7 @@ const Dashboard = () => {
       <DashboardHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-8">Your Financial Garden</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-8">Tu Jardín Financiero</h1>
         
         {/* Three Column Layout */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -24,11 +24,11 @@ const Dashboard = () => {
                   <Sprout className="h-16 w-16 text-growth" />
                 </div>
                 <div className="w-full">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Your Financial Garden</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Watch your progress grow</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Tu Jardín Financiero</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Observa crecer tu progreso</p>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progress</span>
+                      <span className="text-muted-foreground">Progreso</span>
                       <span className="font-medium text-growth">35%</span>
                     </div>
                     <Progress value={35} className="h-2" />
@@ -49,16 +49,16 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Debt Mountain</h3>
-                  <p className="text-sm text-muted-foreground mb-2">Total Debt: $12,450</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Montaña de Deudas</h3>
+                  <p className="text-sm text-muted-foreground mb-2">Deuda Total: $12,450</p>
                   <div className="flex flex-wrap gap-2 justify-center mt-4">
-                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Card A</span>
-                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Loan B</span>
-                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Credit C</span>
+                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Tarjeta A</span>
+                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Préstamo B</span>
+                    <span className="px-3 py-1 rounded-full bg-earth/20 text-xs font-medium text-earth">Crédito C</span>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full border-earth text-earth hover:bg-earth/10">
-                  View Details
+                  Ver Detalles
                 </Button>
               </div>
             </Link>
@@ -72,8 +72,8 @@ const Dashboard = () => {
                   <Calendar className="h-5 w-5 text-trust" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">Upcoming Payments</h4>
-                  <p className="text-sm text-muted-foreground">3 due this month</p>
+                  <h4 className="font-semibold text-foreground">Próximos Pagos</h4>
+                  <p className="text-sm text-muted-foreground">3 este mes</p>
                 </div>
               </Link>
             </Card>
@@ -84,8 +84,8 @@ const Dashboard = () => {
                   <Award className="h-5 w-5 text-growth" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">Badges & Goals</h4>
-                  <p className="text-sm text-muted-foreground">5 achievements</p>
+                  <h4 className="font-semibold text-foreground">Insignias y Metas</h4>
+                  <p className="text-sm text-muted-foreground">5 logros</p>
                 </div>
               </Link>
             </Card>
@@ -96,8 +96,8 @@ const Dashboard = () => {
                   <MessageCircle className="h-5 w-5 text-accent" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">Support & Negotiation</h4>
-                  <p className="text-sm text-muted-foreground">Get help</p>
+                  <h4 className="font-semibold text-foreground">Soporte y Negociación</h4>
+                  <p className="text-sm text-muted-foreground">Obtener ayuda</p>
                 </div>
               </Link>
             </Card>
@@ -107,10 +107,10 @@ const Dashboard = () => {
         {/* Bottom: Micro-Lessons */}
         <div className="animate-fade-in">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-foreground">Micro-Lessons for Growth</h2>
+            <h2 className="text-2xl font-bold text-foreground">Micro-Lecciones de Crecimiento</h2>
             <Link to="/lessons">
               <Button variant="ghost" className="text-growth hover:text-growth/80">
-                View All
+                Ver Todas
               </Button>
             </Link>
           </div>
@@ -125,8 +125,8 @@ const Dashboard = () => {
                   <BookOpen className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground mb-1">Smart Savings Strategies</h4>
-                  <p className="text-sm text-muted-foreground">Learn how to save more effectively</p>
+                  <h4 className="font-semibold text-foreground mb-1">Estrategias Inteligentes de Ahorro</h4>
+                  <p className="text-sm text-muted-foreground">Aprende a ahorrar de manera más efectiva</p>
                 </div>
               </Link>
             </Card>
@@ -140,8 +140,8 @@ const Dashboard = () => {
                   <BookOpen className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground mb-1">Payment Planning</h4>
-                  <p className="text-sm text-muted-foreground">Master your payment schedule</p>
+                  <h4 className="font-semibold text-foreground mb-1">Planificación de Pagos</h4>
+                  <p className="text-sm text-muted-foreground">Domina tu calendario de pagos</p>
                 </div>
               </Link>
             </Card>
@@ -155,8 +155,8 @@ const Dashboard = () => {
                   <BookOpen className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground mb-1">Negotiation Tactics</h4>
-                  <p className="text-sm text-muted-foreground">Lower your interest rates</p>
+                  <h4 className="font-semibold text-foreground mb-1">Tácticas de Negociación</h4>
+                  <p className="text-sm text-muted-foreground">Reduce tus tasas de interés</p>
                 </div>
               </Link>
             </Card>

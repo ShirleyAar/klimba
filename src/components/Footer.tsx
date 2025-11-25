@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Shield className="h-4 w-4 text-growth" />
-            <span>Privacy: We do not ask for bank details.</span>
+            <span>Privacidad: No solicitamos datos bancarios.</span>
           </div>
           
           <nav className="flex items-center gap-6">
@@ -16,19 +16,19 @@ const Footer = () => {
               to="/faq" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              FAQ
+              Preguntas
             </Link>
             <Link 
               to="/privacy" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Privacy
+              Privacidad
             </Link>
             <Link 
               to="/contact" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Contact
+              Contacto
             </Link>
           </nav>
         </div>

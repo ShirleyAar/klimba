@@ -17,19 +17,19 @@ const Header = () => {
             to="/about" 
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            About
+            Acerca de
           </Link>
           <Link 
             to="/faq" 
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            FAQ
+            Preguntas
           </Link>
           <Link 
             to="/contact" 
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Contact
+            Contacto
           </Link>
         </nav>
       </div>
