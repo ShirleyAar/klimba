@@ -25,8 +25,8 @@ const Register = () => {
     
     if (!formData.termsAccepted) {
       toast({
-        title: "Terms Required",
-        description: "Please accept the terms to continue.",
+        title: "Términos Requeridos",
+        description: "Por favor acepta los términos para continuar.",
         variant: "destructive",
       });
       return;
@@ -34,8 +34,8 @@ const Register = () => {
 
     if (!formData.email || !formData.password || !formData.name) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all fields.",
+        title: "Información Incompleta",
+        description: "Por favor completa todos los campos.",
         variant: "destructive",
       });
       return;
@@ -45,16 +45,16 @@ const Register = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address.",
+        title: "Correo Inválido",
+        description: "Por favor ingresa un correo electrónico válido.",
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Welcome to FinMate!",
-      description: "Your account has been created successfully.",
+      title: "¡Bienvenido a FinMate!",
+      description: "Tu cuenta ha sido creada exitosamente.",
     });
     
     navigate("/dashboard");
@@ -68,16 +68,16 @@ const Register = () => {
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-start">
           {/* Registration Form */}
           <Card className="p-8 animate-fade-in">
-            <h2 className="text-3xl font-bold text-foreground mb-2">Create Your Account</h2>
-            <p className="text-muted-foreground mb-6">Start your financial journey today</p>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Crea tu Cuenta</h2>
+            <p className="text-muted-foreground mb-6">Comienza tu viaje financiero hoy</p>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Nombre</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your full name"
+                  placeholder="Tu nombre completo"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
@@ -85,11 +85,11 @@ const Register = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="tu@correo.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -97,11 +97,11 @@ const Register = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Contraseña</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Create a secure password"
+                  placeholder="Crea una contraseña segura"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
@@ -120,19 +120,19 @@ const Register = () => {
                   htmlFor="terms"
                   className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I accept the terms and conditions
+                  Acepto los términos y condiciones
                 </label>
               </div>
               
               <Button type="submit" className="w-full bg-growth hover:bg-growth/90 text-white" size="lg">
-                Enter My Financial Garden
+                Entrar a mi Jardín Financiero
               </Button>
             </form>
             
             <p className="text-center text-sm text-muted-foreground mt-6">
-              Already have an account?{" "}
+              ¿Ya tienes una cuenta?{" "}
               <Link to="/dashboard" className="text-growth hover:underline font-medium">
-                Log in
+                Iniciar sesión
               </Link>
             </p>
           </Card>
@@ -143,15 +143,15 @@ const Register = () => {
               <div className="p-4 rounded-full bg-trust/20">
                 <Lock className="h-12 w-12 text-trust" />
               </div>
-              <h3 className="text-2xl font-semibold text-foreground">Your Privacy Matters</h3>
+              <h3 className="text-2xl font-semibold text-foreground">Tu Privacidad es Importante</h3>
               <p className="text-muted-foreground">
-                We do not ask for bank details or sensitive financial information. 
-                FinMate helps you organize and strategize without compromising your security.
+                No solicitamos datos bancarios ni información financiera sensible. 
+                FinMate te ayuda a organizar y estrategizar sin comprometer tu seguridad.
               </p>
               <div className="pt-4 space-y-2 text-sm text-muted-foreground">
-                <p>✓ No bank account linking</p>
-                <p>✓ Encrypted data storage</p>
-                <p>✓ Full privacy control</p>
+                <p>✓ Sin vinculación de cuentas bancarias</p>
+                <p>✓ Almacenamiento de datos encriptado</p>
+                <p>✓ Control total de privacidad</p>
               </div>
             </div>
           </Card>

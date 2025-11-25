@@ -26,59 +26,59 @@ const Lessons = () => {
   const lessons: Lesson[] = [
     {
       id: 1,
-      title: "Smart Savings Strategies",
-      description: "Learn how to save more effectively with proven methods",
+      title: "Estrategias Inteligentes de Ahorro",
+      description: "Aprende a ahorrar de manera más efectiva con métodos comprobados",
       category: "savings",
       icon: TrendingUp,
-      content: "Building an emergency fund is crucial for financial stability. Start by setting aside 10% of your income each month. Use automated transfers to make saving effortless. Track your progress and celebrate small wins along the way.",
+      content: "Construir un fondo de emergencia es crucial para la estabilidad financiera. Comienza apartando el 10% de tus ingresos cada mes. Usa transferencias automáticas para hacer el ahorro sin esfuerzo. Rastrea tu progreso y celebra pequeños logros en el camino.",
     },
     {
       id: 2,
-      title: "Payment Planning Basics",
-      description: "Master your payment schedule and never miss a due date",
+      title: "Fundamentos de Planificación de Pagos",
+      description: "Domina tu calendario de pagos y nunca pierdas una fecha límite",
       category: "payments",
       icon: Calendar,
-      content: "Create a payment calendar to visualize all your due dates. Set up automatic payments where possible. Always pay at least the minimum to avoid late fees. Consider bi-weekly payments to reduce interest over time.",
+      content: "Crea un calendario de pagos para visualizar todas tus fechas de vencimiento. Configura pagos automáticos cuando sea posible. Siempre paga al menos el mínimo para evitar cargos por mora. Considera pagos quincenales para reducir intereses con el tiempo.",
     },
     {
       id: 3,
-      title: "Negotiation Tactics",
-      description: "Lower your interest rates through effective communication",
+      title: "Tácticas de Negociación",
+      description: "Reduce tus tasas de interés a través de comunicación efectiva",
       category: "negotiation",
       icon: MessageCircle,
-      content: "Call your creditors and ask for lower rates. Be polite but persistent. Reference your payment history and competitor offers. Consider balance transfer options for high-interest debts.",
+      content: "Llama a tus acreedores y solicita tasas más bajas. Sé cortés pero persistente. Menciona tu historial de pagos y ofertas de la competencia. Considera opciones de transferencia de saldo para deudas con intereses altos.",
     },
     {
       id: 4,
-      title: "Emergency Fund Essentials",
-      description: "Build a safety net for unexpected expenses",
+      title: "Elementos Esenciales del Fondo de Emergencia",
+      description: "Construye una red de seguridad para gastos inesperados",
       category: "savings",
       icon: PiggyBank,
-      content: "Aim for 3-6 months of expenses in your emergency fund. Keep it in a high-yield savings account. Use it only for true emergencies. Replenish it as soon as possible after withdrawals.",
+      content: "Apunta a tener de 3 a 6 meses de gastos en tu fondo de emergencia. Mantenlo en una cuenta de ahorros de alto rendimiento. Úsalo solo para verdaderas emergencias. Repónlo lo antes posible después de retiros.",
     },
     {
       id: 5,
-      title: "Credit Score Improvement",
-      description: "Understand and boost your credit rating",
+      title: "Mejora de Puntaje Crediticio",
+      description: "Comprende e impulsa tu calificación crediticia",
       category: "payments",
       icon: CreditCard,
-      content: "Pay all bills on time. Keep credit utilization below 30%. Don't close old credit accounts. Monitor your credit report regularly for errors. Consider becoming an authorized user on a good account.",
+      content: "Paga todas las cuentas a tiempo. Mantén la utilización de crédito por debajo del 30%. No cierres cuentas de crédito antiguas. Monitorea tu reporte de crédito regularmente para detectar errores. Considera convertirte en usuario autorizado en una buena cuenta.",
     },
     {
       id: 6,
-      title: "Debt Consolidation Guide",
-      description: "Simplify multiple debts into one manageable payment",
+      title: "Guía de Consolidación de Deudas",
+      description: "Simplifica múltiples deudas en un pago manejable",
       category: "negotiation",
       icon: FileText,
-      content: "Evaluate consolidation loans vs. balance transfers. Calculate total interest savings. Ensure the new rate is lower than your current average. Avoid accumulating new debt after consolidating.",
+      content: "Evalúa préstamos de consolidación vs. transferencias de saldo. Calcula el ahorro total en intereses. Asegúrate de que la nueva tasa sea más baja que tu promedio actual. Evita acumular nueva deuda después de consolidar.",
     },
   ];
 
   const categories = [
-    { id: "all" as const, label: "All" },
-    { id: "savings" as const, label: "Savings" },
-    { id: "payments" as const, label: "Payments" },
-    { id: "negotiation" as const, label: "Negotiation" },
+    { id: "all" as const, label: "Todas" },
+    { id: "savings" as const, label: "Ahorro" },
+    { id: "payments" as const, label: "Pagos" },
+    { id: "negotiation" as const, label: "Negociación" },
   ];
 
   const filteredLessons = selectedCategory === "all" 
@@ -96,11 +96,11 @@ const Lessons = () => {
           className="mb-4 text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
+          Volver al Panel
         </Button>
 
-        <h1 className="text-3xl font-bold text-foreground mb-2">Micro-Lessons</h1>
-        <p className="text-muted-foreground mb-8">Bite-sized lessons to grow your financial knowledge</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Micro-Lecciones</h1>
+        <p className="text-muted-foreground mb-8">Lecciones breves para hacer crecer tu conocimiento financiero</p>
         
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2 mb-8">
@@ -146,7 +146,7 @@ const Lessons = () => {
                   size="sm"
                   className="w-full justify-center text-growth hover:text-growth/80 hover:bg-growth/10"
                 >
-                  View Lesson
+                  Ver Lección
                 </Button>
               </Card>
             );
@@ -176,14 +176,14 @@ const Lessons = () => {
                       onClick={() => setSelectedLesson(null)}
                       className="flex-1 bg-growth hover:bg-growth/90 text-white"
                     >
-                      Got it!
+                      ¡Entendido!
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => navigate("/dashboard")}
                       className="flex-1"
                     >
-                      Back to Dashboard
+                      Volver al Panel
                     </Button>
                   </div>
                 </div>

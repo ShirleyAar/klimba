@@ -13,38 +13,38 @@ const DebtDetails = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
 
   const debts = [
-    { id: 1, name: "Credit Card A", amount: 5200, rate: 18.5, dueDate: "2025-12-15" },
-    { id: 2, name: "Personal Loan B", amount: 4500, rate: 12.0, dueDate: "2025-12-20" },
-    { id: 3, name: "Store Credit C", amount: 2750, rate: 21.0, dueDate: "2025-12-10" },
+    { id: 1, name: "Tarjeta de Crédito A", amount: 5200, rate: 18.5, dueDate: "2025-12-15" },
+    { id: 2, name: "Préstamo Personal B", amount: 4500, rate: 12.0, dueDate: "2025-12-20" },
+    { id: 3, name: "Crédito de Tienda C", amount: 2750, rate: 21.0, dueDate: "2025-12-10" },
   ];
 
   const strategies = [
-    { id: "interest", name: "Reduce Interest", icon: TrendingDown, description: "Focus on high-rate debts first" },
-    { id: "late", name: "Avoid Late Payments", icon: Shield, description: "Prioritize upcoming due dates" },
-    { id: "simplify", name: "Simplify Accounts", icon: Zap, description: "Consolidate multiple debts" },
+    { id: "interest", name: "Reducir Intereses", icon: TrendingDown, description: "Enfócate primero en deudas con tasas altas" },
+    { id: "late", name: "Evitar Pagos Tardíos", icon: Shield, description: "Prioriza fechas de vencimiento próximas" },
+    { id: "simplify", name: "Simplificar Cuentas", icon: Zap, description: "Consolida múltiples deudas" },
   ];
 
   const handleSimulate = (strategyId: string) => {
     setSelectedStrategy(strategyId);
     toast({
-      title: "Strategy Simulated",
-      description: `Showing results for ${strategies.find(s => s.id === strategyId)?.name}`,
+      title: "Estrategia Simulada",
+      description: `Mostrando resultados para ${strategies.find(s => s.id === strategyId)?.name}`,
     });
   };
 
   const handleApplyStrategy = () => {
     if (!selectedStrategy) {
       toast({
-        title: "No Strategy Selected",
-        description: "Please simulate a strategy first",
+        title: "Ninguna Estrategia Seleccionada",
+        description: "Por favor simula una estrategia primero",
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Strategy Applied",
-      description: "Your debt plan has been updated successfully",
+      title: "Estrategia Aplicada",
+      description: "Tu plan de deudas ha sido actualizado exitosamente",
     });
     navigate("/dashboard");
   };
@@ -60,15 +60,15 @@ const DebtDetails = () => {
           className="mb-4 text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
+          Volver al Panel
         </Button>
 
-        <h1 className="text-3xl font-bold text-foreground mb-8">Debt & Strategy Details</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-8">Detalles de Deudas y Estrategias</h1>
         
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left: Debt List */}
           <div className="lg:col-span-2 space-y-4 animate-fade-in">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Your Debts</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Tus Deudas</h2>
             
             {debts.map((debt) => (
               <Card key={debt.id} className="p-6">
@@ -77,15 +77,15 @@ const DebtDetails = () => {
                     <h3 className="font-semibold text-foreground mb-1">{debt.name}</h3>
                     <div className="grid grid-cols-3 gap-4 text-sm mt-3">
                       <div>
-                        <span className="text-muted-foreground">Amount</span>
+                        <span className="text-muted-foreground">Monto</span>
                         <p className="font-medium text-foreground">${debt.amount.toLocaleString()}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Rate</span>
+                        <span className="text-muted-foreground">Tasa</span>
                         <p className="font-medium text-foreground">{debt.rate}%</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Due Date</span>
+                        <span className="text-muted-foreground">Fecha de Vencimiento</span>
                         <p className="font-medium text-foreground">{debt.dueDate}</p>
                       </div>
                     </div>
@@ -101,7 +101,7 @@ const DebtDetails = () => {
           {/* Right: Simulate Strategy */}
           <div className="space-y-4 animate-scale-in">
             <Card className="p-6 sticky top-24">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Simulate Strategy</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">Simular Estrategia</h3>
               
               <div className="space-y-3 mb-6">
                 {strategies.map((strategy) => {
@@ -134,19 +134,19 @@ const DebtDetails = () => {
 
               {selectedStrategy && (
                 <div className="p-4 bg-muted/50 rounded-lg mb-4">
-                  <h4 className="font-semibold text-foreground mb-3">Before vs After</h4>
+                  <h4 className="font-semibold text-foreground mb-3">Antes vs Después</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Current Monthly Payment</span>
+                      <span className="text-muted-foreground">Pago Mensual Actual</span>
                       <span className="font-medium">$850</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">With Strategy</span>
+                      <span className="text-muted-foreground">Con Estrategia</span>
                       <span className="font-medium text-growth">$720</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Savings</span>
-                      <span className="font-semibold text-growth">$130/mo</span>
+                      <span className="text-muted-foreground">Ahorro</span>
+                      <span className="font-semibold text-growth">$130/mes</span>
                     </div>
                   </div>
                 </div>
@@ -158,14 +158,14 @@ const DebtDetails = () => {
                   className="w-full bg-growth hover:bg-growth/90 text-white"
                   disabled={!selectedStrategy}
                 >
-                  Apply Strategy
+                  Aplicar Estrategia
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => navigate("/dashboard")}
                   className="w-full"
                 >
-                  Return to Dashboard
+                  Volver al Panel
                 </Button>
               </div>
             </Card>

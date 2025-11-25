@@ -21,7 +21,7 @@ const Home = () => {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-foreground">35%</div>
-                  <div className="text-sm text-muted-foreground">Debt Reduction</div>
+                  <div className="text-sm text-muted-foreground">Reducción de Deuda</div>
                 </div>
               </div>
             </Card>
@@ -37,21 +37,21 @@ const Home = () => {
           {/* Central Card */}
           <Card className="p-8 md:p-12 text-center max-w-2xl mx-auto animate-slide-up shadow-lg">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              FinMate — Your Financial Partner
+              FinMate — Tu Compañero Financiero
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-              Grow your financial garden with simple tools to manage debts, track progress, and learn smart money strategies.
+              Haz crecer tu jardín financiero con herramientas simples para gestionar deudas, seguir tu progreso y aprender estrategias inteligentes.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register">
                 <Button size="lg" className="w-full sm:w-auto bg-growth hover:bg-growth/90 text-white">
-                  Create Account
+                  Crear Cuenta
                 </Button>
               </Link>
               <Link to="/dashboard">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto border-growth text-growth hover:bg-growth/10">
-                  Log In
+                  Iniciar Sesión
                 </Button>
               </Link>
             </div>
