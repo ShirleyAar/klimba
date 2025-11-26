@@ -2,21 +2,28 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
-import { Edit, TrendingDown, Shield, Zap, ChevronLeft } from "lucide-react";
+import { Edit, TrendingDown, Shield, Zap, ChevronLeft, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useApp } from "@/contexts/AppContext";
 
 const DebtDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { debts, updateDebt, deleteDebt } = useApp();
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
-
-  const debts = [
-    { id: 1, name: "Tarjeta de Crédito A", amount: 5200, rate: 18.5, dueDate: "2025-12-15" },
-    { id: 2, name: "Préstamo Personal B", amount: 4500, rate: 12.0, dueDate: "2025-12-20" },
-    { id: 3, name: "Crédito de Tienda C", amount: 2750, rate: 21.0, dueDate: "2025-12-10" },
-  ];
+  const [editingDebt, setEditingDebt] = useState<typeof debts[0] | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    amount: "",
+    rate: "",
+    dueDate: "",
+  });
 
   const strategies = [
     { id: "interest", name: "Reducir Intereses", icon: TrendingDown, description: "Enfócate primero en deudas con tasas altas" },
@@ -49,6 +56,41 @@ const DebtDetails = () => {
     navigate("/dashboard");
   };
 
+  const handleEditDebt = (debt: typeof debts[0]) => {
+    setEditingDebt(debt);
+    setFormData({
+      name: debt.name,
+      amount: debt.amount.toString(),
+      rate: debt.rate.toString(),
+      dueDate: debt.dueDate,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveDebt = () => {
+    if (editingDebt) {
+      updateDebt(editingDebt.id, {
+        name: formData.name,
+        amount: parseFloat(formData.amount),
+        rate: parseFloat(formData.rate),
+        dueDate: formData.dueDate,
+      });
+      toast({
+        title: "Deuda Actualizada",
+        description: "Los cambios han sido guardados",
+      });
+      setIsEditDialogOpen(false);
+    }
+  };
+
+  const handleDeleteDebt = (id: string) => {
+    deleteDebt(id);
+    toast({
+      title: "Deuda Eliminada",
+      description: "La deuda y su recordatorio han sido eliminados",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/30">
       <DashboardHeader />
@@ -70,32 +112,65 @@ const DebtDetails = () => {
           <div className="lg:col-span-2 space-y-4 animate-fade-in">
             <h2 className="text-xl font-semibold text-foreground mb-4">Tus Deudas</h2>
             
-            {debts.map((debt) => (
-              <Card key={debt.id} className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{debt.name}</h3>
-                    <div className="grid grid-cols-3 gap-4 text-sm mt-3">
-                      <div>
-                        <span className="text-muted-foreground">Monto</span>
-                        <p className="font-medium text-foreground">${debt.amount.toLocaleString()}</p>
+            {debts.map((debt) => {
+              const debtProgress = Math.round((debt.paid / debt.amount) * 100);
+              
+              return (
+                <Card key={debt.id} className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground mb-1">{debt.name}</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3">
+                        <div>
+                          <span className="text-muted-foreground">Monto Total</span>
+                          <p className="font-medium text-foreground">${debt.amount.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Pagado</span>
+                          <p className="font-medium text-growth">${debt.paid.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Tasa</span>
+                          <p className="font-medium text-foreground">{debt.rate}%</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Vencimiento</span>
+                          <p className="font-medium text-foreground">{new Date(debt.dueDate).toLocaleDateString('es-ES')}</p>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-muted-foreground">Tasa</span>
-                        <p className="font-medium text-foreground">{debt.rate}%</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Fecha de Vencimiento</span>
-                        <p className="font-medium text-foreground">{debt.dueDate}</p>
+                      <div className="mt-3">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-muted-foreground">Progreso</span>
+                          <span className="font-semibold text-growth">{debtProgress}%</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-growth transition-all" 
+                            style={{ width: `${debtProgress}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
+                    <div className="flex flex-col gap-2 ml-4">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleEditDebt(debt)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteDebt(debt.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="ml-4">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
 
           {/* Right: Simulate Strategy */}
@@ -171,6 +246,65 @@ const DebtDetails = () => {
             </Card>
           </div>
         </div>
+
+        {/* Edit Debt Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Editar Deuda</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Nombre de la Deuda</Label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Monto Total</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Tasa de Interés (%)</Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={formData.rate}
+                  onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Fecha Límite</Label>
+                <Input
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  onClick={handleSaveDebt}
+                  className="flex-1 bg-growth hover:bg-growth/90 text-white"
+                >
+                  Guardar Cambios
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
       
       <Footer />

@@ -9,10 +9,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useApp } from "@/contexts/AppContext";
 
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setUser } = useApp();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,6 +53,11 @@ const Register = () => {
       });
       return;
     }
+
+    setUser({
+      name: formData.name,
+      email: formData.email,
+    });
 
     toast({
       title: "¡Bienvenido a FinMate!",
