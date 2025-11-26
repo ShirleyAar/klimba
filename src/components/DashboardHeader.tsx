@@ -5,10 +5,10 @@ const DashboardHeader = () => {
   const location = useLocation();
   
   const navItems = [
-    { path: "/dashboard/debts", label: "Deudas", icon: CreditCard },
-    { path: "/dashboard/income", label: "Ingresos", icon: DollarSign },
-    { path: "/dashboard/lessons", label: "Lecciones", icon: BookOpen },
-    { path: "/dashboard/profile", label: "Perfil", icon: User },
+    { path: "/debts", label: "Deudas", icon: CreditCard },
+    { path: "/income", label: "Ingresos", icon: DollarSign },
+    { path: "/lessons", label: "Lecciones", icon: BookOpen },
+    { path: "/profile", label: "Perfil", icon: User },
   ];
 
   return (

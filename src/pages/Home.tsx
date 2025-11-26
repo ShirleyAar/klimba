@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { TrendingUp, Sprout } from "lucide-react";
+import { TrendingUp, Sprout, Star } from "lucide-react";
 
 const Home = () => {
   return (
@@ -56,6 +56,51 @@ const Home = () => {
               </Link>
             </div>
           </Card>
+
+          {/* Testimonials Section */}
+          <div className="mt-20">
+            <h2 className="text-3xl font-bold text-center text-foreground mb-12">
+              Lo Que Dicen Nuestros Usuarios
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="p-6 bg-gradient-to-br from-card to-muted/30 hover:shadow-lg transition-shadow">
+                <div className="flex gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-growth text-growth" />
+                  ))}
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "El servicio es excelente. Me ayudó a organizar mis deudas de manera simple."
+                </p>
+                <p className="text-sm font-medium text-muted-foreground">— María G.</p>
+              </Card>
+
+              <Card className="p-6 bg-gradient-to-br from-card to-muted/30 hover:shadow-lg transition-shadow">
+                <div className="flex gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-growth text-growth" />
+                  ))}
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "Me ayudó a organizar mis deudas. Muy fácil de usar y sin complicaciones."
+                </p>
+                <p className="text-sm font-medium text-muted-foreground">— Carlos R.</p>
+              </Card>
+
+              <Card className="p-6 bg-gradient-to-br from-card to-muted/30 hover:shadow-lg transition-shadow">
+                <div className="flex gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-growth text-growth" />
+                  ))}
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "Muy fácil de usar. La planta que crece me motiva a seguir pagando mis deudas."
+                </p>
+                <p className="text-sm font-medium text-muted-foreground">— Ana L.</p>
+              </Card>
+            </div>
+          </div>
         </div>
       </main>
       

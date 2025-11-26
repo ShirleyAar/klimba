@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
-import { TrendingUp, Calendar, MessageCircle, PiggyBank, CreditCard, FileText, ChevronLeft, Play } from "lucide-react";
+import { TrendingUp, Calendar, MessageCircle, PiggyBank, CreditCard, FileText, ChevronLeft, Play, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 type LessonCategory = "savings" | "payments" | "negotiation";
 
@@ -15,13 +16,16 @@ interface Lesson {
   description: string;
   category: LessonCategory;
   icon: any;
-  content: string;
+  youtubeId: string;
+  viewed: boolean;
 }
 
 const Lessons = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<LessonCategory | "all">("all");
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [viewedLessons, setViewedLessons] = useState<Set<number>>(new Set());
 
   const lessons: Lesson[] = [
     {
@@ -30,7 +34,8 @@ const Lessons = () => {
       description: "Aprende a ahorrar de manera más efectiva con métodos comprobados",
       category: "savings",
       icon: TrendingUp,
-      content: "Construir un fondo de emergencia es crucial para la estabilidad financiera. Comienza apartando el 10% de tus ingresos cada mes. Usa transferencias automáticas para hacer el ahorro sin esfuerzo. Rastrea tu progreso y celebra pequeños logros en el camino.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(1),
     },
     {
       id: 2,
@@ -38,7 +43,8 @@ const Lessons = () => {
       description: "Domina tu calendario de pagos y nunca pierdas una fecha límite",
       category: "payments",
       icon: Calendar,
-      content: "Crea un calendario de pagos para visualizar todas tus fechas de vencimiento. Configura pagos automáticos cuando sea posible. Siempre paga al menos el mínimo para evitar cargos por mora. Considera pagos quincenales para reducir intereses con el tiempo.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(2),
     },
     {
       id: 3,
@@ -46,7 +52,8 @@ const Lessons = () => {
       description: "Reduce tus tasas de interés a través de comunicación efectiva",
       category: "negotiation",
       icon: MessageCircle,
-      content: "Llama a tus acreedores y solicita tasas más bajas. Sé cortés pero persistente. Menciona tu historial de pagos y ofertas de la competencia. Considera opciones de transferencia de saldo para deudas con intereses altos.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(3),
     },
     {
       id: 4,
@@ -54,7 +61,8 @@ const Lessons = () => {
       description: "Construye una red de seguridad para gastos inesperados",
       category: "savings",
       icon: PiggyBank,
-      content: "Apunta a tener de 3 a 6 meses de gastos en tu fondo de emergencia. Mantenlo en una cuenta de ahorros de alto rendimiento. Úsalo solo para verdaderas emergencias. Repónlo lo antes posible después de retiros.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(4),
     },
     {
       id: 5,
@@ -62,7 +70,8 @@ const Lessons = () => {
       description: "Comprende e impulsa tu calificación crediticia",
       category: "payments",
       icon: CreditCard,
-      content: "Paga todas las cuentas a tiempo. Mantén la utilización de crédito por debajo del 30%. No cierres cuentas de crédito antiguas. Monitorea tu reporte de crédito regularmente para detectar errores. Considera convertirte en usuario autorizado en una buena cuenta.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(5),
     },
     {
       id: 6,
@@ -70,9 +79,18 @@ const Lessons = () => {
       description: "Simplifica múltiples deudas en un pago manejable",
       category: "negotiation",
       icon: FileText,
-      content: "Evalúa préstamos de consolidación vs. transferencias de saldo. Calcula el ahorro total en intereses. Asegúrate de que la nueva tasa sea más baja que tu promedio actual. Evita acumular nueva deuda después de consolidar.",
+      youtubeId: "dQw4w9WgXcQ",
+      viewed: viewedLessons.has(6),
     },
   ];
+
+  const handleMarkAsViewed = (lessonId: number) => {
+    setViewedLessons(prev => new Set(prev).add(lessonId));
+    toast({
+      title: "Lección Completada",
+      description: "Has marcado esta lección como vista",
+    });
+  };
 
   const categories = [
     { id: "all" as const, label: "Todas" },
@@ -124,15 +142,24 @@ const Lessons = () => {
             return (
               <Card 
                 key={lesson.id} 
-                className="p-6 hover:shadow-lg transition-all cursor-pointer group animate-fade-in"
+                className={`p-6 hover:shadow-lg transition-all cursor-pointer group animate-fade-in ${
+                  lesson.viewed ? "bg-growth/5 border-growth/20" : ""
+                }`}
                 onClick={() => setSelectedLesson(lesson)}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 rounded-lg bg-growth/10 group-hover:bg-growth/20 transition-colors">
+                  <div className={`p-3 rounded-lg ${lesson.viewed ? "bg-growth/20" : "bg-growth/10"} group-hover:bg-growth/20 transition-colors`}>
                     <Icon className="h-6 w-6 text-growth" />
                   </div>
-                  <div className="p-2 rounded-full bg-muted group-hover:bg-growth/10 transition-colors">
-                    <Play className="h-4 w-4 text-muted-foreground group-hover:text-growth" />
+                  <div className="flex gap-2">
+                    {lesson.viewed && (
+                      <div className="p-2 rounded-full bg-growth/20">
+                        <CheckCircle className="h-4 w-4 text-growth" />
+                      </div>
+                    )}
+                    <div className="p-2 rounded-full bg-muted group-hover:bg-growth/10 transition-colors">
+                      <Play className="h-4 w-4 text-muted-foreground group-hover:text-growth" />
+                    </div>
                   </div>
                 </div>
                 
@@ -146,7 +173,7 @@ const Lessons = () => {
                   size="sm"
                   className="w-full justify-center text-growth hover:text-growth/80 hover:bg-growth/10"
                 >
-                  Ver Lección
+                  {lesson.viewed ? "Ver de nuevo" : "Ver Lección"}
                 </Button>
               </Card>
             );
@@ -155,7 +182,7 @@ const Lessons = () => {
 
         {/* Lesson Modal */}
         <Dialog open={!!selectedLesson} onOpenChange={() => setSelectedLesson(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             {selectedLesson && (
               <>
                 <DialogHeader>
@@ -168,22 +195,35 @@ const Lessons = () => {
                 </DialogHeader>
                 <div className="space-y-4">
                   <p className="text-muted-foreground">{selectedLesson.description}</p>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-foreground leading-relaxed">{selectedLesson.content}</p>
+                  
+                  {/* YouTube Embed */}
+                  <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-lg"
+                      src={`https://www.youtube.com/embed/${selectedLesson.youtubeId}`}
+                      title={selectedLesson.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
                   </div>
+
                   <div className="flex gap-2 pt-4">
                     <Button 
-                      onClick={() => setSelectedLesson(null)}
+                      onClick={() => {
+                        handleMarkAsViewed(selectedLesson.id);
+                        setSelectedLesson(null);
+                      }}
                       className="flex-1 bg-growth hover:bg-growth/90 text-white"
                     >
-                      ¡Entendido!
+                      Marcar como Visto
                     </Button>
                     <Button 
                       variant="outline"
-                      onClick={() => navigate("/dashboard")}
+                      onClick={() => setSelectedLesson(null)}
                       className="flex-1"
                     >
-                      Volver al Panel
+                      Cerrar
                     </Button>
                   </div>
                 </div>
