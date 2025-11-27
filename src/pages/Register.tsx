@@ -14,11 +14,9 @@ import { useApp } from "@/contexts/AppContext";
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  // Traemos las funciones del contexto (que creamos antes)
   const { setUser, handleLogin, userId } = useApp();
   
-  // Estado para saber si estamos en modo "Login" (true) o "Registro" (false)
+  // Este es el "interruptor" para cambiar de pantalla
   const [isLoginMode, setIsLoginMode] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -28,7 +26,7 @@ const Register = () => {
     termsAccepted: false,
   });
 
-  // Función para cambiar entre Login y Registro
+  // Esta función cambia el interruptor
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
   };
@@ -36,7 +34,7 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // --- MODO LOGIN (INICIAR SESIÓN) ---
+    // --- MODO LOGIN (SI YA TIENE CUENTA) ---
     if (isLoginMode) {
         if (!formData.email || !formData.password) {
             toast({ 
@@ -47,20 +45,16 @@ const Register = () => {
             return;
         }
         
-        // Simulamos que el login es exitoso usando el userId que ya tenemos
+        // Aquí simulamos que entramos
         if (userId) {
             handleLogin(userId);
             toast({ title: "¡Hola de nuevo!", description: "Has iniciado sesión correctamente." });
-            // La redirección la maneja App.tsx automáticamente al cambiar el estado,
-            // pero por seguridad forzamos la navegación.
             navigate("/dashboard");
-        } else {
-             toast({ title: "Error", description: "No se pudo iniciar sesión. Intenta registrarte.", variant: "destructive" });
         }
         return;
     }
 
-    // --- MODO REGISTRO (CREAR CUENTA) ---
+    // --- MODO REGISTRO (SI ES NUEVO) ---
     if (!formData.termsAccepted) {
       toast({ title: "Términos Requeridos", description: "Por favor acepta los términos.", variant: "destructive" });
       return;
@@ -71,13 +65,11 @@ const Register = () => {
       return;
     }
 
-    // Guardamos el nombre del usuario
     setUser({
       name: formData.name,
       email: formData.email,
     });
 
-    // Activamos la sesión
     if (userId) {
         handleLogin(userId);
     }
@@ -97,8 +89,8 @@ const Register = () => {
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-start">
           
-          {/* Tarjeta del Formulario */}
           <Card className="p-8 animate-fade-in">
+            {/* Título que cambia según el modo */}
             <h2 className="text-3xl font-bold text-foreground mb-2">
                 {isLoginMode ? "Iniciar Sesión" : "Crea tu Cuenta"}
             </h2>
@@ -108,7 +100,7 @@ const Register = () => {
             
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Campo Nombre: Solo aparece si NO estamos en modo Login */}
+              {/* El campo Nombre SOLO se muestra si NO estamos en modo Login */}
               {!isLoginMode && (
                   <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <Label htmlFor="name">Nombre</Label>
@@ -118,7 +110,7 @@ const Register = () => {
                         placeholder="Tu nombre completo" 
                         value={formData.name} 
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                        required={!isLoginMode} // Solo es requerido en registro
+                        required={!isLoginMode} 
                     />
                   </div>
               )}
@@ -136,10 +128,7 @@ const Register = () => {
               </div>
               
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Contraseña</Label>
-                    {isLoginMode && <a href="#" className="text-xs text-growth hover:underline">¿Olvidaste tu contraseña?</a>}
-                </div>
+                <Label htmlFor="password">Contraseña</Label>
                 <Input 
                     id="password" 
                     type="password" 
@@ -150,7 +139,7 @@ const Register = () => {
                 />
               </div>
               
-              {/* Checkbox Términos: Solo aparece si NO estamos en modo Login */}
+              {/* Los términos SOLO se muestran si NO estamos en modo Login */}
               {!isLoginMode && (
                   <div className="flex items-center space-x-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <Checkbox 
@@ -169,7 +158,7 @@ const Register = () => {
               </Button>
             </form>
             
-            {/* Enlace para cambiar de modo */}
+            {/* AQUÍ ESTABA EL PROBLEMA: Ahora usamos un botón que cambia el estado, NO un link */}
             <div className="text-center text-sm text-muted-foreground mt-6">
                 {isLoginMode ? "¿No tienes cuenta? " : "¿Ya tienes una cuenta? "}
                 <button 
@@ -183,22 +172,11 @@ const Register = () => {
 
           </Card>
           
-          {/* Tarjeta Informativa (Lado Derecho) */}
           <Card className="p-8 bg-gradient-to-br from-trust-light to-card border-trust/20 animate-scale-in">
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="p-4 rounded-full bg-trust/20">
-                <Lock className="h-12 w-12 text-trust" />
-              </div>
+              <div className="p-4 rounded-full bg-trust/20"><Lock className="h-12 w-12 text-trust" /></div>
               <h3 className="text-2xl font-semibold text-foreground">Tu Privacidad es Importante</h3>
-              <p className="text-muted-foreground">
-                No solicitamos datos bancarios ni información financiera sensible. 
-                FinMate te ayuda a organizar y estrategizar sin comprometer tu seguridad.
-              </p>
-              <div className="pt-4 space-y-2 text-sm text-muted-foreground w-full text-left pl-4">
-                <p className="flex items-center gap-2"><span className="text-growth">✓</span> Sin vinculación bancaria</p>
-                <p className="flex items-center gap-2"><span className="text-growth">✓</span> Almacenamiento seguro</p>
-                <p className="flex items-center gap-2"><span className="text-growth">✓</span> Gratis y fácil de usar</p>
-              </div>
+              <p className="text-muted-foreground">No solicitamos datos bancarios ni información financiera sensible.</p>
             </div>
           </Card>
         </div>
