@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// --- Types Existentes ---
+// Types
 export interface User {
   name: string;
   email: string;
@@ -59,16 +59,15 @@ export interface Streak {
   lastActivityDate: string;
 }
 
-// --- Context Type Actualizado ---
+// Context type
 interface AppContextType {
-  // Nuevas propiedades para la Autenticación
   userId: string | null;
   handleLogin: (id: string) => void;
   handleLogout: () => void;
-
-  // Propiedades existentes de tu juego
+  
   user: User | null;
   setUser: (user: User | null) => void;
+  
   debts: Debt[];
   addDebt: (debt: Omit<Debt, "id">) => void;
   updateDebt: (id: string, debt: Partial<Debt>) => void;
@@ -89,11 +88,8 @@ interface AppContextType {
   getPlantStage: () => number;
 }
 
-// Create context
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// --- Provider Props Actualizado ---
-// Ahora aceptamos las funciones de login que vienen de App.tsx
 interface AppProviderProps {
   children: ReactNode;
   userId: string | null;
@@ -101,11 +97,25 @@ interface AppProviderProps {
   handleLogout: () => void;
 }
 
-// Provider component
 export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, handleLogin, handleLogout }) => {
-  const [user, setUser] = useState<User | null>(null);
   
-  // --- Estado Inicial de Datos (Tu código original) ---
+  // === CORRECCIÓN CLAVE: Cargar usuario desde localStorage ===
+  const [user, setUserState] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('finmate_user_data');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  // Función personalizada para guardar el usuario y persistirlo
+  const setUser = (u: User | null) => {
+    setUserState(u);
+    if (u) {
+      localStorage.setItem('finmate_user_data', JSON.stringify(u));
+    } else {
+      localStorage.removeItem('finmate_user_data');
+    }
+  };
+
+  // --- Resto de los datos (sin cambios) ---
   const [debts, setDebts] = useState<Debt[]>([
     { id: "1", name: "Tarjeta de Crédito A", amount: 5200, paid: 1500, rate: 18.5, dueDate: "2025-12-15" },
     { id: "2", name: "Préstamo Personal B", amount: 4500, paid: 1200, rate: 12.0, dueDate: "2025-12-20" },
@@ -136,7 +146,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     lastActivityDate: new Date().toISOString().split("T")[0],
   });
 
-  // Generate payments from debts
   const [payments, setPayments] = useState<Payment[]>([]);
 
   useEffect(() => {
@@ -144,14 +153,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
       id: `payment-${debt.id}`,
       debtId: debt.id,
       debtName: debt.name,
-      amount: (debt.amount - debt.paid) / 12, // Monthly payment
+      amount: (debt.amount - debt.paid) / 12,
       dueDate: debt.dueDate,
       paid: false,
     }));
     setPayments(generatedPayments);
   }, [debts]);
 
-  // Debt functions
   const addDebt = (debt: Omit<Debt, "id">) => {
     const newDebt = { ...debt, id: Date.now().toString() };
     setDebts(prev => [...prev, newDebt]);
@@ -165,13 +173,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     setDebts(prev => prev.filter(debt => debt.id !== id));
   };
 
-  // Payment functions
   const markPaymentAsPaid = (id: string) => {
     setPayments(prev => prev.map(payment => 
       payment.id === id ? { ...payment, paid: true } : payment
     ));
     
-    // Update debt progress
     const payment = payments.find(p => p.id === id);
     if (payment) {
       updateDebt(payment.debtId, { 
@@ -180,7 +186,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     }
   };
 
-  // Transaction functions
   const addTransaction = (transaction: Omit<Transaction, "id">) => {
     const newTransaction = { ...transaction, id: Date.now().toString() };
     setTransactions(prev => [...prev, newTransaction]);
@@ -194,14 +199,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
-  // Badge functions
   const earnBadge = (id: string) => {
     setBadges(prev => prev.map(badge => 
       badge.id === id ? { ...badge, earned: true, date: new Date().toISOString().split("T")[0] } : badge
     ));
   };
 
-  // Challenge functions
   const updateChallengeProgress = (id: string, progress: number) => {
     setChallenges(prev => prev.map(challenge => {
       if (challenge.id === id) {
@@ -212,7 +215,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     }));
   };
 
-  // Streak functions
   const updateStreak = () => {
     const today = new Date().toISOString().split("T")[0];
     const lastDate = new Date(streak.lastActivityDate);
@@ -220,9 +222,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     const diffDays = Math.floor((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return; // Already updated today
+      return;
     } else if (diffDays === 1) {
-      // Consecutive day
       const newCurrent = streak.current + 1;
       setStreak({
         current: newCurrent,
@@ -230,7 +231,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
         lastActivityDate: today,
       });
     } else {
-      // Streak broken
       setStreak({
         current: 1,
         longest: streak.longest,
@@ -239,31 +239,26 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
     }
   };
 
-  // Calculate debt progress (0-100%)
   const getDebtProgress = () => {
     const totalDebt = debts.reduce((sum, debt) => sum + debt.amount, 0);
     const totalPaid = debts.reduce((sum, debt) => sum + debt.paid, 0);
     return totalDebt > 0 ? Math.round((totalPaid / totalDebt) * 100) : 0;
   };
 
-  // Get plant stage based on debt progress
   const getPlantStage = () => {
     const progress = getDebtProgress();
-    if (progress === 0) return 1; // Semilla
-    if (progress < 20) return 2; // Brote
-    if (progress < 40) return 3; // Planta joven
-    if (progress < 60) return 4; // Planta media
-    if (progress < 80) return 5; // Planta madura
-    return 6; // Planta florecida
+    if (progress === 0) return 1;
+    if (progress < 20) return 2;
+    if (progress < 40) return 3;
+    if (progress < 60) return 4;
+    if (progress < 80) return 5;
+    return 6;
   };
 
   const value: AppContextType = {
-    // Nuevas funciones de sesión
     userId,
     handleLogin,
     handleLogout,
-    
-    // Funciones existentes
     user,
     setUser,
     debts,
@@ -289,7 +284,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, hand
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-// Custom hook to use the context
 export const useApp = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
