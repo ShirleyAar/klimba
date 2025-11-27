@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// Types
+// --- Types Existentes ---
 export interface User {
   name: string;
   email: string;
@@ -59,8 +59,14 @@ export interface Streak {
   lastActivityDate: string;
 }
 
-// Context type
+// --- Context Type Actualizado ---
 interface AppContextType {
+  // Nuevas propiedades para la Autenticación
+  userId: string | null;
+  handleLogin: (id: string) => void;
+  handleLogout: () => void;
+
+  // Propiedades existentes de tu juego
   user: User | null;
   setUser: (user: User | null) => void;
   debts: Debt[];
@@ -86,9 +92,20 @@ interface AppContextType {
 // Create context
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// --- Provider Props Actualizado ---
+// Ahora aceptamos las funciones de login que vienen de App.tsx
+interface AppProviderProps {
+  children: ReactNode;
+  userId: string | null;
+  handleLogin: (id: string) => void;
+  handleLogout: () => void;
+}
+
 // Provider component
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AppProvider: React.FC<AppProviderProps> = ({ children, userId, handleLogin, handleLogout }) => {
   const [user, setUser] = useState<User | null>(null);
+  
+  // --- Estado Inicial de Datos (Tu código original) ---
   const [debts, setDebts] = useState<Debt[]>([
     { id: "1", name: "Tarjeta de Crédito A", amount: 5200, paid: 1500, rate: 18.5, dueDate: "2025-12-15" },
     { id: "2", name: "Préstamo Personal B", amount: 4500, paid: 1200, rate: 12.0, dueDate: "2025-12-20" },
@@ -241,6 +258,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const value: AppContextType = {
+    // Nuevas funciones de sesión
+    userId,
+    handleLogin,
+    handleLogout,
+    
+    // Funciones existentes
     user,
     setUser,
     debts,
