@@ -24,82 +24,74 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
+  // === CORRECCIÓN AQUÍ: SE DEFINE COMO string | null ===
   const [userId, setUserId] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(false);
-  // Estado local para forzar la actualización visual inmediata
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // 1. ID DEL USUARIO (PERSISTENTE):
-    // Lo guardamos en localStorage para que NO pierda sus datos (lecciones, deudas)
-    // aunque cierre la pestaña.
+    // 1. Lógica para generar un ID de usuario único (simulación de sesión)
     let currentUserId = localStorage.getItem('guest_user_id');
     if (!currentUserId) {
       currentUserId = crypto.randomUUID();
       localStorage.setItem('guest_user_id', currentUserId);
+      // Simulación: forzar a ir al registro la primera vez
+      localStorage.setItem('is_logged_in', 'false'); 
     }
+    
+    // 2. Establecer el ID de usuario
     setUserId(currentUserId);
-
-    // 2. ESTADO DE LA SESIÓN (VOLÁTIL):
-    // Usamos sessionStorage. Si cierra la pestaña, esto se borra y pedirá registro de nuevo.
-    const sessionStatus = sessionStorage.getItem('is_logged_in') === 'true';
-    setIsLoggedIn(sessionStatus);
-
     setAuthReady(true);
   }, []);
 
   const handleLogin = (id: string) => {
-    // Guardamos en SESIÓN (se borra al cerrar pestaña)
-    sessionStorage.setItem('is_logged_in', 'true');
-    setIsLoggedIn(true);
-    // No recargamos la página, dejamos que React haga la redirección suave
+    // Simular inicio de sesión guardando la bandera
+    localStorage.setItem('is_logged_in', 'true');
+    setUserId(id); // Aunque ya tiene un ID, esto podría ser para cambiar a un ID real
   };
   
   const handleLogout = () => {
-    sessionStorage.removeItem('is_logged_in');
-    setIsLoggedIn(false);
-    window.location.reload(); 
+    // Simular cierre de sesión
+    localStorage.setItem('is_logged_in', 'false');
+    // Generar un nuevo ID de invitado al cerrar sesión (opcional)
+    localStorage.removeItem('guest_user_id'); 
+    setUserId(null); 
   };
 
+
   if (!authReady) {
+    // Muestra un loader mientras genera el ID
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
-        <p className="text-xl font-semibold text-growth">Cargando...</p>
+        <p className="text-xl font-semibold text-growth">Cargando aplicación...</p>
       </div>
     );
   }
 
+  // Define si el usuario está 'autenticado' (si tiene la bandera 'is_logged_in' en true)
+  const isAuthenticated = localStorage.getItem('is_logged_in') === 'true' && !!userId;
+
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Pasar el ID de usuario a AppProvider */}
       <AppProvider userId={userId} handleLogin={handleLogin} handleLogout={handleLogout}> 
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <HashRouter>
             <Routes>
-              {/* 1. REDIRECCIÓN AUTOMÁTICA */}
-              {/* Si ya entró, va al Dashboard. Si no, al Registro */}
+              {/* === LÓGICA DE REDIRECCIÓN CONDICIONAL === */}
+              {/* Si está autenticado, va al Dashboard; si no, va al Register */}
               <Route 
                   path="/" 
                   element={
-                      isLoggedIn ? 
+                      isAuthenticated ? 
                       <Navigate to="/dashboard" replace /> : 
                       <Navigate to="/register" replace />
                   } 
               />
-
-              {/* 2. PROTECCIÓN DE RUTA DE REGISTRO */}
-              {/* Si ya está logueado, no le dejamos ver el registro, lo mandamos al dashboard */}
-              <Route 
-                  path="/register" 
-                  element={
-                      isLoggedIn ? 
-                      <Navigate to="/dashboard" replace /> : 
-                      <Register />
-                  } 
-              />
               
               <Route path="/home" element={<Home />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/debts" element={<DebtDetails />} />
               <Route path="/lessons" element={<Lessons />} />
@@ -111,6 +103,7 @@ const App = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/support" element={<Support />} />
               <Route path="/streaks" element={<Streaks />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </HashRouter>
