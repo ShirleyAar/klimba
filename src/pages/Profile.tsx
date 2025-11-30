@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // Agregamos useEffect por seguridad
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,19 +13,19 @@ import { useToast } from "@/hooks/use-toast";
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  
   const { user, setUser, handleLogout } = useApp();
   
-  // Estado para controlar si estamos editando
   const [isEditing, setIsEditing] = useState(false);
 
-  // Estado local para el formulario
+ 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     avatar: "",
   });
 
-  // Efecto para cargar los datos del usuario cuando el componente se monta
+  
   useEffect(() => {
     if (user) {
       setFormData({
@@ -36,10 +36,11 @@ const Profile = () => {
     }
   }, [user]);
 
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Guardamos los cambios en el contexto (y localStorage)
+    
     setUser({
       name: formData.name,
       email: formData.email,
@@ -48,14 +49,14 @@ const Profile = () => {
 
     toast({
       title: "Perfil Actualizado",
-      description: "Tus cambios han sido guardados exitosamente",
+      description: "Tus cambios han sido guardados exitosamente.",
     });
     
-    setIsEditing(false); // Salimos del modo edición
+    setIsEditing(false); 
   };
 
+
   const handleCancel = () => {
-    // Revertimos los cambios al valor original
     setFormData({
       name: user?.name || "",
       email: user?.email || "",
@@ -67,6 +68,13 @@ const Profile = () => {
   const handleLogoutClick = () => {
     handleLogout();
     navigate("/");
+  };
+
+  const handlePremiumClick = () => {
+    toast({
+      title: "✨ ¡Próximamente!",
+      description: "Estamos trabajando en las funciones Premium. ¡Espéralas pronto!",
+    });
   };
 
   return (
@@ -91,6 +99,7 @@ const Profile = () => {
           
           <Card className="p-8">
             <div className="flex flex-col items-center mb-8">
+              {/* AVATAR */}
               <div className="relative group">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-growth-light to-growth flex items-center justify-center overflow-hidden border-4 border-white shadow-sm">
                   {formData.avatar ? (
@@ -104,13 +113,13 @@ const Profile = () => {
                   )}
                 </div>
                 
-                {/* Botón de cámara solo visible en modo edición */}
+                {/* Botón de cámara (Solo visible al editar) */}
                 {isEditing && (
                   <button 
                     type="button"
                     className="absolute bottom-0 right-0 p-2 rounded-full bg-growth text-white hover:bg-growth/90 transition-colors shadow-md cursor-pointer z-10"
                     onClick={() => {
-                      const url = prompt("Ingresa la URL de tu avatar (imagen):");
+                      const url = prompt("Ingresa la URL de una imagen para tu avatar:");
                       if (url) setFormData({ ...formData, avatar: url });
                     }}
                     title="Cambiar foto"
@@ -120,7 +129,7 @@ const Profile = () => {
                 )}
               </div>
               
-              {/* Nombre y Correo debajo del avatar (Solo lectura visual) */}
+              {/* Nombre (Solo lectura) */}
               {!isEditing && (
                 <div className="text-center mt-4">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -132,6 +141,7 @@ const Profile = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Campo Nombre */}
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre</Label>
                 <Input
@@ -139,12 +149,13 @@ const Profile = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  disabled={!isEditing} // Deshabilitado si no estamos editando
+                  disabled={!isEditing} // ¡AQUÍ ESTÁ LA CLAVE!
                   required
-                  className={!isEditing ? "bg-muted/50 border-transparent text-muted-foreground" : ""}
+                  className={!isEditing ? "bg-muted/50 border-transparent text-muted-foreground cursor-not-allowed" : ""}
                 />
               </div>
 
+              {/* Campo Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Correo Electrónico</Label>
                 <div className="flex items-center gap-2">
@@ -154,24 +165,26 @@ const Profile = () => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    disabled={!isEditing}
+                    disabled={!isEditing} // ¡AQUÍ ESTÁ LA CLAVE!
                     required
-                    className={`flex-1 ${!isEditing ? "bg-muted/50 border-transparent text-muted-foreground" : ""}`}
+                    className={`flex-1 ${!isEditing ? "bg-muted/50 border-transparent text-muted-foreground cursor-not-allowed" : ""}`}
                   />
                 </div>
               </div>
 
-              {/* Botones de Acción */}
+              {/* Botones de Acción (Cambian según el estado) */}
               <div className="flex gap-4 pt-4">
                 {!isEditing ? (
+                  // MODO LECTURA: Mostrar botón "Editar"
                   <Button 
                     type="button"
-                    onClick={() => setIsEditing(true)} // Activa el modo edición
+                    onClick={() => setIsEditing(true)} 
                     className="w-full bg-growth hover:bg-growth/90 text-white"
                   >
                     Editar Perfil
                   </Button>
                 ) : (
+                  // MODO EDICIÓN: Mostrar "Guardar" y "Cancelar"
                   <>
                     <Button 
                       type="submit"
@@ -182,7 +195,7 @@ const Profile = () => {
                     <Button 
                       type="button"
                       variant="outline"
-                      onClick={handleCancel} // Cancela la edición
+                      onClick={handleCancel} 
                       className="flex-1"
                     >
                       Cancelar
@@ -192,6 +205,7 @@ const Profile = () => {
               </div>
             </form>
 
+            {/* Botón Cerrar Sesión */}
             <div className="pt-8 border-t mt-8">
               <Button 
                 variant="destructive" 
@@ -204,17 +218,37 @@ const Profile = () => {
             </div>
           </Card>
 
-          {/* Tarjetas informativas (Premium y Privacidad) */}
+          {/* Tarjeta Premium */}
           <Card className="mt-6 p-6 bg-gradient-to-r from-accent/10 to-card border-accent/20">
             <h3 className="font-semibold text-foreground mb-2 text-lg">FinMate Premium ✨</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Desbloquea todas las funciones avanzadas
             </p>
-            <Button className="w-full bg-accent hover:bg-accent/90 text-white font-semibold">
+            
+            <ul className="space-y-2 mb-6 text-sm">
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-growth">✓</span> Simulador de estrategias
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-growth">✓</span> Análisis predictivo
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-growth">✓</span> Exportación PDF
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-growth">✓</span> Soporte 24/7
+              </li>
+            </ul>
+
+            <Button 
+              className="w-full bg-accent hover:bg-accent/90 text-white font-semibold"
+              onClick={handlePremiumClick}
+            >
               Actualizar a Premium
             </Button>
           </Card>
 
+          {/* Tarjeta Privacidad */}
           <Card className="mt-6 p-6 bg-gradient-to-r from-trust-light to-card border-trust/20">
             <h3 className="font-semibold text-foreground mb-2">Privacidad y Seguridad</h3>
             <p className="text-sm text-muted-foreground">
