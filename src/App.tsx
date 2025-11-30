@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "./contexts/AppContext";
 import { useState, useEffect } from "react"; 
 
@@ -68,34 +68,43 @@ const App = () => {
     );
   }
 
-  return (
-  <QueryClientProvider client={queryClient}>
-    <AppProvider userId={userId} handleLogin={handleLogin} handleLogout={handleLogout}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/debts" element={<DebtDetails />} />
-            <Route path="/lessons" element={<Lessons />} />
-            <Route path="/progress" element={<Progress />} />
-            <Route path="/badges" element={<Badges />} />
-            <Route path="/challenges" element={<Challenges />} />
-            <Route path="/payments" element={<Payments />} />
-            <Route path="/income" element={<Income />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/streaks" element={<Streaks />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AppProvider>
-  </QueryClientProvider>
-);
+   return (
+    <QueryClientProvider client={queryClient}>
+      <AppProvider userId={userId} handleLogin={handleLogin} handleLogout={handleLogout}> 
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <HashRouter>
+            <Routes>
+              {/* Ruta Principal: Home */}
+              <Route path="/" element={<Home />} />
+              
+              {/* Ruta de Registro/Login (Única entrada) */}
+              <Route 
+                  path="/register" 
+                  element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <Register />} 
+              />
+              
+              {/* Rutas Privadas */}
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/debts" element={<ProtectedRoute><DebtDetails /></ProtectedRoute>} />
+              <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
+              <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
+              <Route path="/badges" element={<ProtectedRoute><Badges /></ProtectedRoute>} />
+              <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+              <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
+              <Route path="/income" element={<ProtectedRoute><Income /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+              <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </HashRouter>
+        </TooltipProvider>
+      </AppProvider>
+    </QueryClientProvider>
+  );
 };
+
 export default App;
