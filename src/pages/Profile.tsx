@@ -6,14 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
-import { ChevronLeft, User, Mail, Camera, LogOut } from "lucide-react"; // Agregamos LogOut
+import { ChevronLeft, User, Mail, Camera, LogOut } from "lucide-react"; // Importamos LogOut
 import { useApp } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  // Traemos todo lo necesario: datos, función de actualizar y función de salir
+  // Traemos user, setUser y handleLogout del contexto
   const { user, setUser, handleLogout } = useApp();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -26,7 +26,6 @@ const Profile = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Guardar cambios en el contexto (y localStorage)
     setUser({
       name: formData.name,
       email: formData.email,
@@ -39,6 +38,13 @@ const Profile = () => {
     });
     
     setIsEditing(false);
+  };
+
+  const handleLogoutClick = () => {
+    // Llamamos a la función de logout del contexto
+    handleLogout();
+    // Forzamos navegación al home por si acaso (aunque App.tsx debería encargarse)
+    navigate("/");
   };
 
   return (
@@ -60,7 +66,7 @@ const Profile = () => {
         <h1 className="text-3xl font-bold text-foreground mb-8">Mi Perfil</h1>
 
         <div className="max-w-2xl mx-auto">
-          <Card className="p-8">
+          <Card className="p-8 animate-fade-in">
             {/* --- SECCIÓN DE AVATAR --- */}
             <div className="flex flex-col items-center mb-8">
               <div className="relative">
@@ -75,7 +81,6 @@ const Profile = () => {
                     <User className="w-16 h-16 text-white" />
                   )}
                 </div>
-                {/* Botón de cámara solo visible al editar */}
                 {isEditing && (
                   <button 
                     className="absolute bottom-0 right-0 p-2 rounded-full bg-growth text-white hover:bg-growth/90 transition-colors shadow-md"
@@ -92,6 +97,7 @@ const Profile = () => {
               <h2 className="mt-4 text-xl font-semibold text-foreground">
                 {formData.name || "Usuario"}
               </h2>
+              <p className="text-muted-foreground">{formData.email || "Sin correo"}</p>
             </div>
 
             {/* --- FORMULARIO DE DATOS --- */}
@@ -148,7 +154,6 @@ const Profile = () => {
                       variant="outline"
                       onClick={() => {
                         setIsEditing(false);
-                        // Revertir cambios si cancela
                         setFormData({
                           name: user?.name || "",
                           email: user?.email || "",
@@ -164,12 +169,12 @@ const Profile = () => {
               </div>
             </form>
 
-            {/* --- BOTÓN DE CERRAR SESIÓN (Integrado al final) --- */}
-            <div className="pt-6 border-t mt-8">
+            {/* --- BOTÓN DE CERRAR SESIÓN --- */}
+            <div className="pt-8 border-t mt-8">
               <Button 
                 variant="destructive" 
-                className="w-full flex items-center justify-center gap-2 py-6 hover:bg-destructive/90"
-                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 py-6 text-lg hover:bg-destructive/90 transition-colors shadow-sm"
+                onClick={handleLogoutClick}
               >
                 <LogOut className="h-5 w-5" />
                 Cerrar Sesión
