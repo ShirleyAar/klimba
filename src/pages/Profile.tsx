@@ -42,6 +42,7 @@ const Profile = () => {
 
   const handleLogoutClick = () => {
     handleLogout();
+    // La redirección al home es manejada por App.tsx o forzamos aquí
     navigate("/");
   };
 
@@ -164,7 +165,7 @@ const Profile = () => {
             <div className="pt-8 border-t mt-8">
               <Button 
                 variant="destructive" 
-                className="w-full flex items-center justify-center gap-2 py-6 hover:bg-destructive/90"
+                className="w-full flex items-center justify-center gap-2 py-6 hover:bg-destructive/90 transition-colors shadow-sm text-lg font-medium"
                 onClick={handleLogoutClick}
               >
                 <LogOut className="h-5 w-5" />
