@@ -11,13 +11,6 @@ import { Lock, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useApp } from "@/contexts/AppContext";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -26,13 +19,15 @@ import {
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setUser } = useApp();
+  const { setUser, handleLogin, userId } = useApp();
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     termsAccepted: false,
   });
+  
   const [termsExpanded, setTermsExpanded] = useState(false);
   const [termsViewed, setTermsViewed] = useState(false);
 
@@ -57,7 +52,7 @@ const Register = () => {
       return;
     }
 
-    // Simple email validation
+    // Validación simple de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast({
@@ -73,10 +68,15 @@ const Register = () => {
       email: formData.email,
     });
 
-    // Track registered user in localStorage
+    // Guardar usuario registrado en localStorage (simulación)
     const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
     registeredUsers.push(formData.email);
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+    // Iniciar sesión automáticamente si hay userId
+    if (userId) {
+        handleLogin(userId);
+    }
 
     toast({
       title: "¡Bienvenido a Klimba!",
@@ -92,7 +92,7 @@ const Register = () => {
       
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-start">
-          {/* Registration Form */}
+          {/* Formulario de Registro */}
           <Card className="p-8 animate-fade-in">
             <h2 className="text-3xl font-bold text-foreground mb-2">Crea tu Cuenta</h2>
             <p className="text-muted-foreground mb-6">Comienza tu viaje financiero hoy</p>
@@ -134,7 +134,7 @@ const Register = () => {
                 />
               </div>
               
-              {/* Terms and Conditions Section */}
+              {/* Sección de Términos y Condiciones */}
               <div className="space-y-3">
                 <Collapsible open={termsExpanded} onOpenChange={(open) => {
                   setTermsExpanded(open);
@@ -200,8 +200,7 @@ const Register = () => {
               
               <Button 
                 type="submit" 
-                variant="growth"
-                className="w-full" 
+                className="w-full bg-growth hover:bg-growth/90 text-white" 
                 size="lg"
               >
                 Entrar a mi Jardín Financiero
@@ -210,13 +209,13 @@ const Register = () => {
             
             <p className="text-center text-sm text-muted-foreground mt-6">
               ¿Ya tienes una cuenta?{" "}
-              <Link to="/dashboard" className="text-growth hover:underline font-medium">
+              <Link to="/login" className="text-growth hover:underline font-medium">
                 Iniciar sesión
               </Link>
             </p>
           </Card>
           
-          {/* Security Card */}
+          {/* Tarjeta de Seguridad */}
           <Card className="p-8 bg-gradient-to-br from-trust-light to-card border-trust/20 animate-scale-in">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="p-4 rounded-full bg-trust/20">

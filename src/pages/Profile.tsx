@@ -6,77 +6,131 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
-import { ChevronLeft, User, Mail, Camera, LogOut } from "lucide-react";
+import { ChevronLeft, User, Mail, Camera, LogOut, Calendar, Save, X } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, setUser, handleLogout } = useApp();
-
+  const { user, setUser, handleLogout } = useApp(); // Traemos handleLogout del contexto
+  
   const [isEditing, setIsEditing] = useState(false);
-
- 
+  
+  // Inicializamos el formulario con valores vacíos por defecto para evitar 'undefined'
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     avatar: "",
   });
+  
+  // Guardamos los datos originales para poder cancelar
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    email: "",
+    avatar: "",
+  });
 
-
+  // Cuando carga el usuario, actualizamos el formulario
   useEffect(() => {
     if (user) {
-      setFormData({
+      const userData = {
         name: user.name || "",
         email: user.email || "",
         avatar: user.avatar || "",
-      });
+      };
+      setFormData(userData);
+      setOriginalData(userData);
     }
   }, [user]);
 
+  // Detectar cambios
+  const hasChanges = 
+    formData.name !== originalData.name || 
+    formData.avatar !== originalData.avatar;
+
+  // Validar nombre
+  const isNameValid = formData.name.trim().length > 0;
+
+  const handleStartEditing = () => {
+    // Aseguramos que originalData tenga los datos actuales antes de editar
+    if (user) {
+        setOriginalData({
+            name: user.name || "",
+            email: user.email || "",
+            avatar: user.avatar || "",
+        });
+    }
+    setIsEditing(true);
+  };
+
+  const handleCancelEditing = () => {
+    setFormData(originalData);
+    setIsEditing(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!isNameValid) {
+      toast({
+        title: "Error",
+        description: "El nombre no puede estar vacío",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Guardar cambios en el contexto global
     setUser({
-      name: formData.name,
-      email: formData.email,
+      name: formData.name.trim(),
+      email: user?.email || "", // El email no se edita aquí por seguridad
+      avatar: formData.avatar,
+    });
+
+    // Actualizar datos originales
+    setOriginalData({
+      name: formData.name.trim(),
+      email: user?.email || "",
       avatar: formData.avatar,
     });
 
     toast({
       title: "Perfil Actualizado",
-      description: "Tus datos se han guardado correctamente.",
+      description: "Tus cambios han sido guardados exitosamente",
     });
     
-    setIsEditing(false); 
-  };
-
-  // Cancelar Edición
-  const handleCancel = () => {
-    
-    if (user) {
-      setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        avatar: user.avatar || "",
-      });
-    }
     setIsEditing(false);
   };
 
-  const handleLogoutClick = () => {
-    handleLogout();
-    navigate("/");
+  // Función para el botón de Cerrar Sesión
+  const onLogoutConfirm = () => {
+    handleLogout(); // Borra sesión y recarga
+    navigate("/"); // Redirige al Home
+    toast({
+      title: "Sesión Cerrada",
+      description: "Has cerrado sesión exitosamente",
+    });
   };
 
-  
-  const handlePremiumClick = () => {
-    toast({
-      title: "✨ Función Premium",
-      description: "¡Próximamente podrás suscribirte para obtener herramientas avanzadas!",
-      duration: 3000,
+  const formatDate = () => {
+    // Simulamos una fecha de registro o usamos la actual si no existe
+    const date = new Date();
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -85,25 +139,47 @@ const Profile = () => {
       <DashboardHeader />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/dashboard")}
-            className="text-muted-foreground hover:text-foreground p-0"
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Volver al Panel
-          </Button>
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate("/dashboard")}
+          className="mb-4 text-muted-foreground hover:text-foreground"
+        >
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Volver al Panel
+        </Button>
+
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-foreground">Mi Perfil</h1>
+          
+          {/* BOTÓN DE CERRAR SESIÓN (ARRIBA DERECHA) */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Estás a punto de cerrar tu sesión. ¿Deseas continuar?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={onLogoutConfirm} className="bg-destructive hover:bg-destructive/90">
+                  Cerrar Sesión
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
-        <h1 className="text-3xl font-bold text-foreground mb-8">Mi Perfil</h1>
-
         <div className="max-w-2xl mx-auto">
-          
-          <Card className="p-8 animate-fade-in">
+          <Card className="p-8">
             <div className="flex flex-col items-center mb-8">
-              {/* AVATAR */}
-              <div className="relative group">
+              <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-growth-light to-growth flex items-center justify-center overflow-hidden border-4 border-white shadow-sm">
                   {formData.avatar ? (
                     <img 
@@ -115,14 +191,13 @@ const Profile = () => {
                     <User className="w-16 h-16 text-white" />
                   )}
                 </div>
-                
-                {/* Botón flotante para cambiar foto (visible al editar) */}
+                {/* Botón de cámara solo visible al editar */}
                 {isEditing && (
                   <button 
                     type="button"
                     className="absolute bottom-0 right-0 p-2 rounded-full bg-growth text-white hover:bg-growth/90 transition-colors shadow-md cursor-pointer z-10"
                     onClick={() => {
-                      const url = prompt("Ingresa la URL de tu imagen:");
+                      const url = prompt("Ingresa la URL de tu avatar:");
                       if (url) setFormData({ ...formData, avatar: url });
                     }}
                     title="Cambiar foto"
@@ -132,14 +207,11 @@ const Profile = () => {
                 )}
               </div>
               
-              {/* Nombre en modo lectura */}
+              {/* Nombre visible si no se edita */}
               {!isEditing && (
-                <div className="text-center mt-4">
-                  <h2 className="text-xl font-semibold text-foreground">
-                    {formData.name || "Usuario"}
-                  </h2>
-                  <p className="text-muted-foreground">{formData.email || "Sin correo"}</p>
-                </div>
+                 <h2 className="text-2xl font-semibold text-foreground mt-4 text-center">
+                    {user?.name || "Usuario"}
+                 </h2>
               )}
             </div>
 
@@ -152,11 +224,14 @@ const Profile = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  disabled={!isEditing} 
+                  disabled={!isEditing} // Se habilita si isEditing es true
                   required
-                  // Estilo visual cuando está deshabilitado
-                  className={!isEditing ? "bg-muted/30 border-transparent text-muted-foreground opacity-100" : "bg-white"}
+                  // Estilo visual claro: fondo blanco si se edita
+                  className={!isEditing ? "bg-muted/30 border-transparent text-muted-foreground" : "bg-white border-input shadow-sm"}
                 />
+                {!isNameValid && isEditing && (
+                  <p className="text-xs text-destructive">El nombre no puede estar vacío</p>
+                )}
               </div>
 
               {/* CAMPO EMAIL */}
@@ -168,21 +243,34 @@ const Profile = () => {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    disabled={!isEditing} 
-                    required
-                    className={`flex-1 ${!isEditing ? "bg-muted/30 border-transparent text-muted-foreground opacity-100" : "bg-white"}`}
+                    // El email no se edita (readOnly)
+                    readOnly
+                    className="flex-1 bg-muted/30 cursor-not-allowed text-muted-foreground"
                   />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  El correo está vinculado a tu cuenta y no puede modificarse
+                </p>
+              </div>
+
+              {/* FECHA REGISTRO */}
+              <div className="space-y-2">
+                <Label>Fecha de Registro</Label>
+                <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-md border border-transparent">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    {formatDate()}
+                  </span>
                 </div>
               </div>
 
-              {/* BOTONES DE ACCIÓN */}
+              {/* BOTONES DE EDICIÓN */}
               <div className="flex gap-4 pt-4">
                 {!isEditing ? (
                   <Button 
                     type="button"
-                    onClick={() => setIsEditing(true)} 
-                    className="w-full bg-growth hover:bg-growth/90 text-white"
+                    onClick={handleStartEditing}
+                    className="flex-1 bg-growth hover:bg-growth/90 text-white"
                   >
                     Editar Perfil
                   </Button>
@@ -190,75 +278,25 @@ const Profile = () => {
                   <>
                     <Button 
                       type="submit"
-                      className="flex-1 bg-growth hover:bg-growth/90 text-white"
+                      disabled={!hasChanges || !isNameValid}
+                      className="flex-1 bg-growth hover:bg-growth/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
+                      <Save className="h-4 w-4 mr-2" />
                       Guardar Cambios
                     </Button>
                     <Button 
                       type="button"
                       variant="outline"
-                      onClick={handleCancel} 
+                      onClick={handleCancelEditing}
                       className="flex-1"
                     >
+                      <X className="h-4 w-4 mr-2" />
                       Cancelar
                     </Button>
                   </>
                 )}
               </div>
             </form>
-
-            <div className="pt-8 border-t mt-8">
-              <Button 
-                variant="destructive" 
-                className="w-full flex items-center justify-center gap-2 py-6 text-lg hover:bg-destructive/90 transition-colors shadow-sm"
-                onClick={handleLogoutClick}
-              >
-                <LogOut className="h-5 w-5" />
-                Cerrar Sesión
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="mt-6 p-6 bg-gradient-to-r from-accent/10 to-card border-accent/20">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="font-semibold text-foreground mb-2 text-lg">FinMate Premium ✨</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Desbloquea todas las funciones avanzadas
-                </p>
-              </div>
-            </div>
-            
-            <ul className="space-y-2 mb-6 text-sm">
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-growth">✓</span>
-                Simulador de estrategias de pago avanzadas
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-growth">✓</span>
-                Análisis predictivo de tu deuda
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-growth">✓</span>
-                Exportación de reportes en PDF
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-growth">✓</span>
-                Soporte prioritario 24/7
-              </li>
-            </ul>
-
-            <Button className="w-full bg-accent hover:bg-accent/90 text-white font-semibold">
-              Actualizar a Premium
-            </Button>
-          </Card>
-
-          <Card className="mt-6 p-6 bg-gradient-to-r from-trust-light to-card border-trust/20">
-            <h3 className="font-semibold text-foreground mb-2">Privacidad y Seguridad</h3>
-            <p className="text-sm text-muted-foreground">
-              Tus datos están seguros con nosotros. No solicitamos información bancaria 
-              ni compartimos tus datos personales con terceros.
-            </p>
           </Card>
         </div>
       </main>
