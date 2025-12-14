@@ -15,7 +15,7 @@ const Home = () => {
           <div className="bg-green-100 p-2 rounded-lg">
             <Leaf className="h-6 w-6 text-growth" />
           </div>
-          <span className="font-bold text-2xl text-gray-800 tracking-tight">FinMate</span>
+          <span className="font-bold text-2xl text-gray-800 tracking-tight">Klimba</span>
         </div>
         <div className="hidden md:flex gap-8 text-sm font-medium text-gray-500">
           <a href="#" className="hover:text-growth transition-colors">Acerca de</a>
@@ -30,7 +30,7 @@ const Home = () => {
         <div className="w-full max-w-4xl text-center space-y-8 animate-fade-in">
           <Card className="bg-white p-12 md:p-16 rounded-3xl shadow-xl border-none ring-1 ring-gray-100">
             <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
-              FinMate — Tu <br />
+              Klimba — Tu <br />
               <span className="text-growth">Compañero Financiero</span>
             </h1>
             
